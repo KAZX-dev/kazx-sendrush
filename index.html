@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<!--
+  SendRush : bouton Envoyer animé
+  © KΛZX.dev Tous droits réservés.
+
+  ---------------------------------------------------------------
+  METTRE CE PROJET SUR GITHUB (résumé, détails dans README.md)
+  ---------------------------------------------------------------
+  1. Crée un dépôt vide sur https://github.com/new
+     (ne coche ni README, ni licence, ni .gitignore : ils existent déjà)
+  2. Dans le dossier du projet, ouvre un terminal et tape :
+
+       git init
+       git add .
+       git commit -m "Premier commit : SendRush"
+       git branch -M main
+       git remote add origin https://github.com/TON-PSEUDO/kazx-sendrush.git
+       git push -u origin main
+
+  3. (Optionnel) Mets le site en ligne gratuitement :
+     Settings > Pages > Source : "Deploy from a branch" > main / (root)
+-->
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>SendRush</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="stage">
+    <div class="wrap" id="wrap">
+      <button class="send" id="send" type="button" data-state="idle">
+        <span class="label">Envoyer</span>
+        <span class="icon" id="icon" aria-hidden="true">
+          <svg viewBox="-5 -5 135 100">
+            <path class="plane" d="M35 4 L118 45 L35 86 L52 45 Z"/>
+            <path class="plane" d="M52 45 H76"/>
+            <path class="plane" d="M2 22 H20 M2 45 H28 M2 68 H20"/>
+          </svg>
+        </span>
+        <svg class="ring" viewBox="0 0 56 56" aria-hidden="true">
+          <circle pathLength="1" cx="28" cy="28" r="23"/>
+        </svg>
+        <svg class="check" viewBox="0 0 30 30" aria-hidden="true">
+          <path pathLength="1" d="M7 15.5l5.5 5.5L23 9.5"/>
+        </svg>
+        <svg class="cross" viewBox="0 0 30 30" aria-hidden="true">
+          <path pathLength="1" d="M9 9L21 21"/>
+          <path pathLength="1" d="M21 9L9 21"/>
+        </svg>
+      </button>
+      <span class="ripple" aria-hidden="true"></span>
+    </div>
+    <p class="status" id="status" role="status" aria-live="polite">Prêt à envoyer</p>
+
+    <!-- Démo uniquement : coche cette case pour voir l'animation d'erreur -->
+    <label class="demo">
+      <input type="checkbox" id="simulateError">
+      Simuler une erreur
+    </label>
+
+    <footer class="copyright">© KΛZX.dev Tous droits réservés.</footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

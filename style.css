@@ -1,0 +1,275 @@
+/*
+  SendRush : feuille de style
+  © KΛZX.dev Tous droits réservés.
+*/
+
+:root {
+  --bg: #f3f4f8;
+  --ink: #1a1c26;
+  --muted: #70758a;
+  --btn: #2347ff;
+  --ok: #30c25a;
+  --ok-ink: #1d8f3f;
+  --err: #ff3b30;
+  --err-ink: #c9261b;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Mode sombre automatique */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e0f14;
+    --ink: #eceef6;
+    --muted: #9298ad;
+    --btn: #4b6bff;
+    --ok: #34c759;
+    --ok-ink: #5fe088;
+    --err: #ff453a;
+    --err-ink: #ff7a70;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e0f14;
+  --ink: #eceef6;
+  --muted: #9298ad;
+  --btn: #4b6bff;
+  --ok: #34c759;
+  --ok-ink: #5fe088;
+  --err: #ff453a;
+  --err-ink: #ff7a70;
+}
+
+html, body { height: 100%; margin: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.stage { display: grid; justify-items: center; gap: 22px; padding: 24px; }
+
+/* Conteneur : sert à centrer l'onde de validation */
+.wrap {
+  position: relative;
+  width: 208px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+}
+
+/* ---------- Bouton ---------- */
+.send {
+  position: relative;
+  width: 208px;
+  height: 56px;
+  border: 0;
+  border-radius: 28px;
+  background: var(--btn);
+  color: #fff;
+  font: 600 17px/1 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  letter-spacing: .1px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: width .42s cubic-bezier(.7, 0, .2, 1),
+              background-color .3s ease,
+              transform .15s ease,
+              box-shadow .3s ease;
+  box-shadow: 0 8px 22px -8px color-mix(in srgb, var(--btn) 70%, transparent);
+}
+.send:focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; }
+.send[data-state="idle"]:active { transform: scale(.97); }
+
+/* ---------- Texte + icône ">" ---------- */
+.label, .icon { transition: opacity .22s ease .28s, transform .22s ease .28s; }
+.icon { display: inline-flex; width: 30px; height: 22px; }
+.icon svg, .rush svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.plane {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.send[data-state="idle"]:hover .icon { transform: translateX(4px); transition-delay: 0s; }
+.send:not([data-state="idle"]) .label { opacity: 0; transform: translateX(-14px); transition-delay: 0s; }
+.send:not([data-state="idle"]) .icon { opacity: 0; transition: none; }
+
+/* ---------- Chevrons lancés à toute vitesse (créés par le JS) ---------- */
+.rush { position: absolute; display: block; pointer-events: none; }
+.streak {
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  width: 74px;
+  height: 3px;
+  margin-top: -1.5px;
+  border-radius: 3px;
+  background: linear-gradient(to left, rgba(255,255,255,.9), rgba(255,255,255,0));
+  transform-origin: right center;
+  transform: scaleX(0);
+}
+
+/* ---------- Transformation en rond de validation ---------- */
+.send[data-state="morph"],
+.send[data-state="done"] {
+  width: 56px;
+  background: var(--ok);
+  box-shadow: 0 8px 22px -8px color-mix(in srgb, var(--ok) 70%, transparent);
+}
+
+/* Erreur : même rond, mais rouge */
+.send.is-error[data-state="morph"],
+.send.is-error[data-state="done"] {
+  background: var(--err);
+  box-shadow: 0 8px 22px -8px color-mix(in srgb, var(--err) 70%, transparent);
+}
+
+/* Succès : le rond saute (avec un petit écrasement à l'atterrissage) */
+.send.hop { animation: hop .65s cubic-bezier(.3, .7, .4, 1); }
+@keyframes hop {
+  0%   { transform: translateY(0)     scale(1, 1); }
+  18%  { transform: translateY(0)     scale(1.08, .92); }
+  45%  { transform: translateY(-18px) scale(.94, 1.08); }
+  70%  { transform: translateY(0)     scale(1.1, .9); }
+  85%  { transform: translateY(-4px)  scale(.98, 1.02); }
+  100% { transform: translateY(0)     scale(1, 1); }
+}
+
+/* Erreur : le rond tremble de gauche à droite */
+.send.shake { animation: shake .55s cubic-bezier(.36, .07, .19, .97); }
+@keyframes shake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(5px); }
+  30%, 50%, 70% { transform: translateX(-10px); }
+  40%, 60% { transform: translateX(10px); }
+}
+
+/* ---------- Coche (succès) et croix (erreur) dessinées au trait ---------- */
+.check,
+.cross {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+/* Cercle de contour : se trace d'abord, à partir du haut */
+.ring {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 56px;
+  height: 56px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 3;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+.ring circle,
+.check path,
+.cross path { stroke-dasharray: 1; stroke-dashoffset: 1; }
+
+/* Cachés tant que le résultat n'est pas affiché */
+.send:not([data-state="done"]) .ring,
+.send:not([data-state="done"]) .check,
+.send:not([data-state="done"]) .cross { visibility: hidden; }
+
+/* Coche seulement en succès, croix seulement en erreur */
+.send.is-error .check,
+.send:not(.is-error) .cross { visibility: hidden; }
+
+.send[data-state="done"] .ring circle {
+  animation: draw .5s cubic-bezier(.65, 0, .35, 1) forwards;
+}
+/* Coche : se dessine juste après le cercle */
+.send[data-state="done"] .check path {
+  animation: draw .38s cubic-bezier(.65, 0, .35, 1) .4s forwards;
+}
+/* Croix : première branche, puis la seconde */
+.send[data-state="done"] .cross path {
+  animation: draw .22s cubic-bezier(.65, 0, .35, 1) .4s forwards;
+}
+.send[data-state="done"] .cross path:nth-child(2) { animation-delay: .6s; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+/* ---------- Onde qui s'échappe du rond ---------- */
+.ripple {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 56px;
+  height: 56px;
+  margin: -28px 0 0 -28px;
+  border-radius: 50%;
+  border: 2px solid var(--ok);
+  opacity: 0;
+  pointer-events: none;
+}
+.wrap.err .ripple { border-color: var(--err); }
+.wrap.ping .ripple { animation: ping .8s ease-out; }
+@keyframes ping {
+  0%   { transform: scale(1);   opacity: .65; }
+  100% { transform: scale(2.1); opacity: 0; }
+}
+
+/* ---------- Texte d'état ---------- */
+.status {
+  margin: 0;
+  min-height: 1.4em;
+  font-size: 15px;
+  color: var(--muted);
+  transition: color .3s ease;
+}
+.status.ok { color: var(--ok-ink); font-weight: 600; }
+.status.err { color: var(--err-ink); font-weight: 600; }
+
+/* ---------- Copyright ---------- */
+.copyright {
+  margin-top: 28px;
+  font-size: 13px;
+  color: var(--muted);
+  opacity: .85;
+  text-align: center;
+}
+
+/* ---------- Option de démo (à supprimer dans ton vrai projet) ---------- */
+.demo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+}
+.demo input { width: 16px; height: 16px; accent-color: var(--err); }
+
+/* ---------- Accessibilité : animations réduites ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .send, .label, .icon { transition-duration: .01s; transition-delay: 0s; }
+  .send.hop, .send.shake { animation: none; }
+  .send[data-state="done"] .ring circle,
+  .send[data-state="done"] .check path,
+  .send[data-state="done"] .cross path { animation: none; stroke-dashoffset: 0; }
+  .wrap.ping .ripple { animation: none; }
+}
